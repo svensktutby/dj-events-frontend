@@ -6,13 +6,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaImage } from 'react-icons/fa';
 import Link from 'next/link';
 import Image from 'next/image';
+import { parseCookies } from '@/helpers/index';
 import { API_URL } from '@/config/index';
 import Layout from '@/components/Layout';
 import Modal from '@/components/Modal';
 import ImageUpload from '@/components/ImageUpload';
 import styles from '@/styles/Form.module.css';
 
-export default function EditEventPage({ evt }) {
+export default function EditEventPage({ evt, token }) {
   const [values, setValues] = useState({
     name: evt.name,
     performers: evt.performers,
@@ -45,11 +46,16 @@ export default function EditEventPage({ evt }) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(values),
     });
 
     if (!res.ok) {
+      if (res.status === 403 || res.status === 401) {
+        toast.error('Unauthorized');
+        return;
+      }
       toast.error('Something Went Wrong');
     } else {
       const evt = await res.json();
@@ -173,13 +179,19 @@ export default function EditEventPage({ evt }) {
       </div>
 
       <Modal show={showModal} onClose={() => setShowModal(false)}>
-        <ImageUpload evtId={evt.id} imageUploaded={imageUploaded} />
+        <ImageUpload
+          evtId={evt.id}
+          imageUploaded={imageUploaded}
+          token={token}
+        />
       </Modal>
     </Layout>
   );
 }
 
 export async function getServerSideProps({ params: { id }, req }) {
+  const { token } = parseCookies(req);
+
   const res = await fetch(`${API_URL}/events/${id}`);
   const evt = await res.json();
 
@@ -188,6 +200,7 @@ export async function getServerSideProps({ params: { id }, req }) {
   return {
     props: {
       evt,
+      token,
     },
   };
 }
