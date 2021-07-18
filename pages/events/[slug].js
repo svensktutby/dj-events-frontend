@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { API_URL } from '@/config/index';
 import Layout from '@/components/Layout';
+import EventMap from '@/components/EventMap';
 import styles from '@/styles/Event.module.css';
 
 export default function EventPage({ evt }) {
@@ -30,6 +31,8 @@ export default function EventPage({ evt }) {
         <p>{evt.description}</p>
         <h3>Venue: {evt.venue}</h3>
         <p>{evt.address}</p>
+
+        <EventMap evt={evt} />
 
         <Link href="/events">
           <a className={styles.back}>&lt; Go Back</a>
