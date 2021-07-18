@@ -6,6 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/svensktutby/dj-events-frontend.git"
   },
+  "homepage": "https://svensktutby-djevents.vercel.app",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
